@@ -45,9 +45,12 @@ fun Calculator(calculator: CalculatorViewModel) {
 
         // Calculator Result Field
         OutlinedTextField(
-            value = calculator.calcString,
+            label = { Text(text = calculator.calcString) },
+            singleLine = true,
+            value = calculator.answer,
             onValueChange = {calculator.calcString = it},
             readOnly = true,
+            shape = AbsoluteCutCornerShape(0.dp),
             modifier = Modifier
                 .padding(16.dp)
         )
@@ -90,17 +93,17 @@ fun Calculator(calculator: CalculatorViewModel) {
             Pair("=") {calculator.calculate()},
         )
 
-        CalculatorRow(rowData = firstRow, calculator = calculator )
-        CalculatorRow(rowData = secondRow, calculator = calculator )
-        CalculatorRow(rowData = thirdRow, calculator = calculator )
-        CalculatorRow(rowData = fourthRow, calculator = calculator )
-        CalculatorRow(rowData = fifthRow, calculator = calculator )
-        CalculatorRow(rowData = sixthRow, calculator = calculator )
+        CalculatorRow(rowData = firstRow)
+        CalculatorRow(rowData = secondRow)
+        CalculatorRow(rowData = thirdRow)
+        CalculatorRow(rowData = fourthRow)
+        CalculatorRow(rowData = fifthRow)
+        CalculatorRow(rowData = sixthRow)
     }
 }
 
 @Composable
-fun CalculatorRow(rowData: List<Pair<String, () -> Unit>>, calculator: CalculatorViewModel) {
+fun CalculatorRow(rowData: List<Pair<String, () -> Unit>>) {
     Row (
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
