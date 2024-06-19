@@ -13,6 +13,19 @@ import kotlin.math.sqrt
 private const val OPERATORS: String = "/+*%-"
 
 /**
+ * Mathematical operator precedence
+ */
+private val PRECEDENCE_MAPPING: Map<String, Int> = mapOf(
+    "(" to 3,
+    ")" to 3,
+    "%" to 2,
+    "/" to 2,
+    "*" to 2,
+    "+" to 1,
+    "-" to 1
+)
+
+/**
  * Determines if a given string is of a float type
  */
 private fun isStringFloat(string: String): Boolean {
@@ -29,15 +42,56 @@ private fun stringHasOperator(string: String) : Boolean {
 }
 
 /**
+ * Returns the operator's precedence represented as an Int.
+ *
+ * The higher the Int value, the higher the precedence.
+ * The precedence of operators are defined in the PRECEDENCE_MAPPING value
+ */
+private fun operatorPrecedence(operator: String): Int {
+    return PRECEDENCE_MAPPING[operator]!!
+}
+
+/**
+ * Evaluates a mathematical expression when given 2 operands (operandOne and operandTwo respectively) and an operator
+ *
+ * Returns a value of Number type
+ */
+private fun evaluateExpression(operandOne: Float, operator: String, operandTwo: Float): Number {
+
+    var answer: Number = 0
+
+    when (operator) {
+        "%" -> answer = operandOne % operandTwo
+        "/" -> answer = operandOne / operandTwo
+        "*" -> answer = operandOne * operandTwo
+        "+" -> answer = operandOne + operandTwo
+        "-" -> answer = operandOne - operandTwo
+    }
+
+    return answer
+}
+
+/**
  * Given an infix formatted string, evaluates the string and returns the result
  */
 private fun infixEvaluation(calcString: String): Number {
 
-    val splitCalcString = calcString.split(" ")
+    val splitCalcString: List<String> = calcString.split(" ")
     val operatorStack = ArrayDeque<String>()
     val operandStack = ArrayDeque<Number>()
 
+    fun evaluateStacks() = run {
+        val operandTwo = operandStack.removeLast().toFloat()
+        val operandOne = operandStack.removeLast().toFloat()
+        val operator: String = operatorStack.removeLast()
+
+        val answer = evaluateExpression(operandOne, operator, operandTwo)
+        operandStack.addLast(answer)
+    }
+
     for (item: String in splitCalcString) {
+
+        // Item is an operand
         if (!stringHasOperator(item)) {
 
             // Convert the operand into the respective number type, float or int
@@ -46,10 +100,25 @@ private fun infixEvaluation(calcString: String): Number {
 
             operandStack.addLast(itemAsNumber)
 
-        } else if (stringHasOperator(item)) {
-            operatorStack.addLast(item)
+        } else if (stringHasOperator(item)) { // Item is an operator
+            if (operatorStack.isEmpty()) {
+                operatorStack.addLast(item)
+            } else {
+                val top: String = operatorStack.last()
+                if (operatorPrecedence(item) >= operatorPrecedence(top)) {
+                    operatorStack.addLast(item)
+                }
+            }
+        } else {
+            evaluateStacks()
         }
+        // Add bracket functionality here
     }
+
+    // Evaluates stacks until the operatorStack is empty
+    do {
+        evaluateStacks()
+    } while (operatorStack.isNotEmpty())
 
     // At the end of the infix evaluation, the first element of operandStack will be the answer
     return operandStack.first()
@@ -66,7 +135,8 @@ class CalculatorViewModel : ViewModel() {
     fun calculate() {
         if (calcString.isEmpty()) return // Can't calculate an empty string
 
-        answer = infixEvaluation(calcString).toString()
+        val result = infixEvaluation(calcString).toString()
+        answer = if (!isStringFloat(result)) result.toInt().toString() else result.toFloat().toString()
     }
 
     /**
@@ -87,6 +157,7 @@ class CalculatorViewModel : ViewModel() {
      * The current operand has a square root operation applied to it
      */
     fun squareRoot() {
+        if (calcString.isEmpty()) return
         val resultAsNumber = calcString.toFloat()
         calcString = sqrt(resultAsNumber).toString()
     }
@@ -95,9 +166,10 @@ class CalculatorViewModel : ViewModel() {
      * Switches the sign of the current result
      */
     fun switchSign() {
-        var resultAsNumber = calcString.toFloat()
+        if (calcString.isEmpty()) return
+        var resultAsNumber = answer.toFloat()
         resultAsNumber *= -1
-        calcString = resultAsNumber.toString()
+        answer = resultAsNumber.toString()
     }
 
     /**
@@ -105,7 +177,6 @@ class CalculatorViewModel : ViewModel() {
      */
     fun addOperand(operand: Int) {
         calcString += operand
-
         if (calcString.isNotEmpty() && !calcString.isDigitsOnly()) {
             calculate()
         }
@@ -135,6 +206,7 @@ class CalculatorViewModel : ViewModel() {
      */
     fun clearResult() {
         calcString = ""
+        answer = ""
     }
 
     /**
@@ -147,5 +219,7 @@ class CalculatorViewModel : ViewModel() {
         } else {
             calcString.dropLast(1)
         }
+
+        calculate()
     }
 }
