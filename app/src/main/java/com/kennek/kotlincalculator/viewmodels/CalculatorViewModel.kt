@@ -4,13 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.kennek.kotlincalculator.data.CalculatorData
 import kotlin.math.sqrt
 
 class CalculatorViewModel : ViewModel() {
 
-    private var answer by mutableStateOf(0)
-    var calcString by mutableStateOf("")
-    var calculatorResult by mutableStateOf("")
+
+    private val calcData by mutableStateOf(CalculatorData(""))
+    var calcString: String = calcData.calcString
 
     private fun isStringFloat(string: String): Boolean {
         return string.contains(".")
@@ -37,17 +38,17 @@ class CalculatorViewModel : ViewModel() {
     }
 
     fun squareRoot() {
-        val resultAsNumber = calculatorResult.toFloat()
-        calculatorResult = sqrt(resultAsNumber).toString()
+        val resultAsNumber = calcString.toFloat()
+        calcString = sqrt(resultAsNumber).toString()
     }
 
     /**
      * Switches the sign of the current result
      */
     fun switchSign() {
-        var resultAsNumber = calculatorResult.toFloat()
+        var resultAsNumber = calcString.toFloat()
         resultAsNumber *= -1
-        calculatorResult = resultAsNumber.toString()
+        calcString = resultAsNumber.toString()
     }
 
     /**
