@@ -7,6 +7,9 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import kotlin.math.sqrt
 
+/**
+  * Defines what classifies as an "operator"
+  */
 private const val OPERATORS: String = "/+*%-"
 
 /**
@@ -66,15 +69,23 @@ class CalculatorViewModel : ViewModel() {
         answer = infixEvaluation(calcString).toString()
     }
 
-
+    /**
+     * Applies an exponent to the current operand
+     */
     fun exponent() {
 
     }
 
+    /**
+     * The current operand is changed to its reciprocal
+     */
     fun reciprocal() {
 
     }
 
+    /**
+     * The current operand has a square root operation applied to it
+     */
     fun squareRoot() {
         val resultAsNumber = calcString.toFloat()
         calcString = sqrt(resultAsNumber).toString()
@@ -103,6 +114,9 @@ class CalculatorViewModel : ViewModel() {
     fun addDecimal() {
     }
 
+    /**
+     * Adds a given operator to the calcString
+     */
     fun addOperator(operator: String) {
         // Can't add operator if no operands are present in the calculation
         if (calcString.isEmpty()) return
