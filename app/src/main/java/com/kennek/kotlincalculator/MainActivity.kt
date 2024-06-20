@@ -56,37 +56,37 @@ fun Calculator(calculator: CalculatorViewModel) {
         )
 
         // First to Sixth rows in the calculator
-        val firstRow = listOf<Pair<String, () -> Unit>>(
+        val firstRow = listOf(
             Pair("%") { calculator.addOperator(" % ") },
             Pair("CE") { calculator.clearEntry() },
             Pair("C") {calculator.clearResult()},
             Pair("<-") {calculator.clearEntry()},
         )
-        val secondRow = listOf<Pair<String, () -> Unit>>(
+        val secondRow = listOf(
             Pair("1/x") { calculator.reciprocal() },
             Pair("EXP") { calculator.exponent() },
             Pair("SQRT") {calculator.squareRoot()},
             Pair("/") {calculator.addOperator(" / ")},
         )
-        val thirdRow = listOf<Pair<String, () -> Unit>>(
+        val thirdRow = listOf(
             Pair("7") { calculator.addOperand(7) },
             Pair("8") { calculator.addOperand(8) },
             Pair("9") {calculator.addOperand(9)},
             Pair("*") {calculator.addOperator(" * ")},
         )
-        val fourthRow = listOf<Pair<String, () -> Unit>>(
+        val fourthRow = listOf(
             Pair("4") { calculator.addOperand(4) },
             Pair("5") { calculator.addOperand(5) },
             Pair("6") {calculator.addOperand(6)},
             Pair("-") {calculator.addOperator(" - ")},
         )
-        val fifthRow = listOf<Pair<String, () -> Unit>>(
+        val fifthRow = listOf(
             Pair("1") { calculator.addOperand(1) },
             Pair("2") { calculator.addOperand(2) },
             Pair("3") {calculator.addOperand(3)},
             Pair("+") {calculator.addOperator(" + ")},
         )
-        val sixthRow = listOf<Pair<String, () -> Unit>>(
+        val sixthRow = listOf(
             Pair("+/-") { calculator.switchSign()},
             Pair("0") { calculator.addOperand(0) },
             Pair(".") {calculator.addDecimal()},
