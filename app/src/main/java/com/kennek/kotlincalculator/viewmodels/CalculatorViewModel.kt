@@ -179,6 +179,7 @@ class CalculatorViewModel : ViewModel() {
         calcString += operand
         if (calcString.isNotEmpty() && !calcString.isDigitsOnly()) {
             calculate()
+            calcString = answer
         }
     }
 
