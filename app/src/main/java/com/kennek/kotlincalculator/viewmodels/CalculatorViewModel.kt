@@ -3,13 +3,12 @@ package com.kennek.kotlincalculator.viewmodels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
-import kotlin.math.sqrt
+
 
 /**
-  * Defines what classifies as an "operator"
-  */
+ * Defines what classifies as an "operator"
+ */
 private const val OPERATORS: String = "/+*%-"
 
 /**
@@ -56,16 +55,16 @@ private fun operatorPrecedence(operator: String): Int {
  *
  * Returns a value of Number type
  */
-private fun evaluateExpression(operandOne: Float, operator: String, operandTwo: Float): Number {
+private fun evaluateExpression(numOne: Float, operator: String, numTwo: Float): Number {
 
     var answer: Number = 0
 
     when (operator) {
-        "%" -> answer = operandOne % operandTwo
-        "/" -> answer = operandOne / operandTwo
-        "*" -> answer = operandOne * operandTwo
-        "+" -> answer = operandOne + operandTwo
-        "-" -> answer = operandOne - operandTwo
+        "%" -> answer = numOne % numTwo
+        "/" -> answer = numOne / numTwo
+        "*" -> answer = numOne * numTwo
+        "+" -> answer = numOne + numTwo
+        "-" -> answer = numOne - numTwo
     }
 
     return answer
@@ -127,100 +126,49 @@ private fun infixEvaluation(calcString: String): Number {
 class CalculatorViewModel : ViewModel() {
 
     var calcString: String by mutableStateOf("")
-    var answer: String by mutableStateOf("")
+    var previousAnswer: String by mutableStateOf("")
 
-    /**
-     * Computes the calculation provided by the user
-     */
+    fun addOperator(operator: Char) {
+        // Can't add an operator to an empty expression
+        if (calcString.isEmpty()) return
+        calcString += " $operator "
+    }
+
+    fun addNumber(num: Byte) {
+        calcString += num
+    }
+
     fun calculate() {
-        if (calcString.isEmpty()) return // Can't calculate an empty string
-
-        val result = infixEvaluation(calcString).toString()
-        answer = if (!isStringFloat(result)) result.toInt().toString() else result.toFloat().toString()
-    }
-
-    /**
-     * Applies an exponent to the current operand
-     */
-    fun exponent() {
-
-    }
-
-    /**
-     * The current operand is changed to its reciprocal
-     */
-    fun reciprocal() {
-
-    }
-
-    /**
-     * The current operand has a square root operation applied to it
-     */
-    fun squareRoot() {
-        if (calcString.isEmpty()) return
-        val resultAsNumber = calcString.toFloat()
-        calcString = sqrt(resultAsNumber).toString()
-    }
-
-    /**
-     * Switches the sign of the current result
-     */
-    fun switchSign() {
-        if (calcString.isEmpty()) return
-        var resultAsNumber = answer.toFloat()
-        resultAsNumber *= -1
-        answer = resultAsNumber.toString()
-    }
-
-    /**
-     * Adds an operand to the operand string for later calculations
-     */
-    fun addOperand(operand: Int) {
-        calcString += operand
-        if (calcString.isNotEmpty() && !calcString.isDigitsOnly()) {
-            calculate()
-            calcString = answer
-        }
+        previousAnswer = infixEvaluation(calcString).toString()
     }
 
     fun addDecimal() {
-    }
-
-    /**
-     * Adds a given operator to the calcString
-     */
-    fun addOperator(operator: String) {
-        // Can't add operator if no operands are present in the calculation
         if (calcString.isEmpty()) return
-
-        val validAction = calcString.length > 1 && calcString.dropLast(1).last() in "+/*-%".toSet()
-
-        if (validAction) {
-            println("Invalid action.")
-        } else {
-            calcString += operator
-        }
+        calcString += '.'
     }
 
-    /**
-     * Clears the entire calculation
-     */
-    fun clearResult() {
-        calcString = ""
-        answer = ""
-    }
-
-    /**
-     * Clears the last input provided by the user
-     */
     fun clearEntry() {
-        if (calcString.isEmpty()) return
-        calcString = if (calcString.length > 1 && calcString.last().toString().isBlank()) {
-            calcString.dropLast(3)
-        } else {
-            calcString.dropLast(1)
-        }
-
-        calculate()
+        calcString = calcString.dropLast(1)
     }
+
+    fun clearResult() {
+        TODO("Not yet implemented")
+    }
+
+    fun reciprocal() {
+        TODO("Not yet implemented")
+    }
+
+    fun exponent() {
+        TODO("Not yet implemented")
+    }
+
+    fun squareRoot() {
+        TODO("Not yet implemented")
+    }
+
+    fun switchSign() {
+        TODO("Not yet implemented")
+    }
+
 }
