@@ -123,23 +123,36 @@ private fun infixEvaluation(calcString: String): Number {
     return operandStack.first()
 }
 
+
+private fun numIsDecimal(num: String): Boolean {
+    return num.toFloatOrNull() != null
+}
+
+
 class CalculatorViewModel : ViewModel() {
 
+    private var lastIsOperator: Boolean = false // determines if the last input was an operator or not
     var calcString: String by mutableStateOf("")
     var previousAnswer: String by mutableStateOf("")
 
     fun addOperator(operator: Char) {
         // Can't add an operator to an empty expression
-        if (calcString.isEmpty()) return
+        if (calcString.isEmpty() || lastIsOperator) return
+
         calcString += " $operator "
+        lastIsOperator = true
     }
 
     fun addNumber(num: Byte) {
         calcString += num
+        lastIsOperator = false
+        calculate()
     }
 
     fun calculate() {
-        previousAnswer = infixEvaluation(calcString).toString()
+        if (lastIsOperator || calcString.isEmpty()) return // Invalid format error
+        val answer: String = infixEvaluation(calcString).toString()
+        previousAnswer = if (numIsDecimal(answer)) answer.toFloat().toString() else answer.toInt().toString()
     }
 
     fun addDecimal() {
