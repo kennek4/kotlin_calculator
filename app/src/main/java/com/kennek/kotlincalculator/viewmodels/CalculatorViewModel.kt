@@ -165,19 +165,9 @@ class CalculatorViewModel : ViewModel() {
     }
 
     fun clearResult() {
-        TODO("Not yet implemented")
-    }
-
-    fun reciprocal() {
-        TODO("Not yet implemented")
-    }
-
-    fun exponent() {
-        TODO("Not yet implemented")
-    }
-
-    fun squareRoot() {
-        TODO("Not yet implemented")
+        calcString = ""
+        previousAnswer = ""
+        lastIsOperator = false
     }
 
     fun switchSign() {
