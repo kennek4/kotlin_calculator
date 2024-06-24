@@ -126,7 +126,7 @@ private fun CalculatorButtons(calculator: CalculatorViewModel) {
         Pair("C") { calculator.clearResult() },
         Pair("()") { calculator.addOperator('(') },
         Pair("%") { calculator.addOperator('%') },
-        Pair("÷") { calculator.clearEntry() },
+        Pair("÷") { calculator.addOperator('/') },
     )
     val secondRow = listOf(
         Pair("7") { calculator.addNumber(7) },
