@@ -5,12 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-
-/**
- * Defines what classifies as an "operator"
- */
-private const val OPERATORS: String = "/+*%-"
-
 /**
  * Mathematical operator precedence
  */
@@ -25,19 +19,17 @@ private val PRECEDENCE_MAPPING: Map<String, Int> = mapOf(
 )
 
 /**
- * Determines if a given string is of a float type
+ * Determines if a given string is of a Float type
  */
 private fun isStringFloat(string: String): Boolean {
-    return string.contains(".")
+    return string.toFloatOrNull() != null
 }
 
 /**
- * Determines if a given string contains an operator character
- *
- * Operators are defined in the OPERATORS const value
+ * Determines if a given string is of an Int type
  */
-private fun stringHasOperator(string: String) : Boolean {
-    return OPERATORS.contains(string)
+private fun isStringInt(string: String): Boolean {
+    return string.toIntOrNull() != null
 }
 
 /**
@@ -67,67 +59,62 @@ private fun evaluateExpression(numOne: Float, operator: String, numTwo: Float): 
         "-" -> answer = numOne - numTwo
     }
 
+    println("$numOne $operator $numTwo = $answer`")
     return answer
 }
 
-/**
- * Given an infix formatted string, evaluates the string and returns the result
- */
-private fun infixEvaluation(calcString: String): Number {
+private fun postfixEvaluation(postFixArray: Array<String>): Number {
+
+    val output = ArrayDeque<String>()
+
+    for (element: String in postFixArray) {
+        if (isStringFloat(element) || isStringInt(element)) {
+            output.addLast(element)
+        } else {
+            val numTwo = output.removeLast().toFloat()
+            val numOne = output.removeLast().toFloat()
+
+            val answer = evaluateExpression(numOne, element, numTwo)
+            output.addLast(answer.toString())
+        }
+    }
+
+    return output.removeLast().toFloat()
+}
+
+private fun infixToPostfix(calcString: String): Array<String> {
 
     val splitCalcString: List<String> = calcString.split(" ")
-    val operatorStack = ArrayDeque<String>()
-    val operandStack = ArrayDeque<Number>()
+    val output = ArrayDeque<String>()
+    val operators = ArrayDeque<String>()
 
-    fun evaluateStacks() = run {
-        val operandTwo = operandStack.removeLast().toFloat()
-        val operandOne = operandStack.removeLast().toFloat()
-        val operator: String = operatorStack.removeLast()
-
-        val answer = evaluateExpression(operandOne, operator, operandTwo)
-        operandStack.addLast(answer)
-    }
-
-    for (item: String in splitCalcString) {
-
-        // Item is an operand
-        if (!stringHasOperator(item)) {
-
-            // Convert the operand into the respective number type, float or int
-            val itemAsNumber: Number =
-                if (isStringFloat(item)) item.toFloat() else item.toInt()
-
-            operandStack.addLast(itemAsNumber)
-
-        } else if (stringHasOperator(item)) { // Item is an operator
-            if (operatorStack.isEmpty()) {
-                operatorStack.addLast(item)
-            } else {
-                val top: String = operatorStack.last()
-                if (operatorPrecedence(item) >= operatorPrecedence(top)) {
-                    operatorStack.addLast(item)
-                }
-            }
-        } else {
-            evaluateStacks()
+    for (token: String in splitCalcString) {
+        if (isStringFloat(token) || isStringInt(token)) {
+            output.addLast(token)
         }
-        // Add bracket functionality here
+        else if (token == "(") {
+            operators.addLast(token)
+        }
+        else if (token == ")") {
+            while (operators.isNotEmpty() && (operators.last() != "(")) {
+                output.addLast(operators.removeLast())
+            }
+
+            operators.removeLast()
+        } else {
+            while (operators.isNotEmpty() && operatorPrecedence(operators.last()) >= operatorPrecedence(token)) {
+                output.addLast(operators.removeLast())
+            }
+            operators.addLast(token)
+        }
     }
 
-    // Evaluates stacks until the operatorStack is empty
-    do {
-        evaluateStacks()
-    } while (operatorStack.isNotEmpty())
+    while (operators.isNotEmpty()) {
+        output.addLast(operators.removeLast())
+    }
 
-    // At the end of the infix evaluation, the first element of operandStack will be the answer
-    return operandStack.first()
+    return output.toTypedArray<String>()
 }
-
-
-private fun numIsDecimal(num: String): Boolean {
-    return num.toFloatOrNull() != null
-}
-
 
 class CalculatorViewModel : ViewModel() {
 
@@ -146,13 +133,13 @@ class CalculatorViewModel : ViewModel() {
     fun addNumber(num: Byte) {
         calcString += num
         lastIsOperator = false
-        calculate()
     }
 
     fun calculate() {
         if (lastIsOperator || calcString.isEmpty()) return // Invalid format error
-        val answer: String = infixEvaluation(calcString).toString()
-        previousAnswer = if (numIsDecimal(answer)) answer.toFloat().toString() else answer.toInt().toString()
+
+        val postFixArray: Array<String> = infixToPostfix(calcString)
+        previousAnswer = postfixEvaluation(postFixArray).toString()
     }
 
     fun addDecimal() {
@@ -173,5 +160,4 @@ class CalculatorViewModel : ViewModel() {
     fun switchSign() {
         TODO("Not yet implemented")
     }
-
 }
