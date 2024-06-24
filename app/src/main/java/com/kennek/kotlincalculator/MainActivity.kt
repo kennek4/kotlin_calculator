@@ -7,18 +7,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,102 +38,84 @@ import com.kennek.kotlincalculator.viewmodels.CalculatorViewModel
 class MainActivity : ComponentActivity() {
 
     private val calculatorViewModel by viewModels<CalculatorViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Calculator(calculatorViewModel)
+            Box(modifier = Modifier.safeDrawingPadding()) {
+                Calculator(calculator = calculatorViewModel)
+            }
         }
     }
 }
 
 @Composable
 fun Calculator(calculator: CalculatorViewModel) {
-    Column (
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box (
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
-    ){
-
-        CalculatorTextFields(calculator)
-
-        CalculatorTopRow(calculator)
-
-        HorizontalDivider(
-            thickness = 1.dp,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-        )
-
-        CalculatorButtons(
-            calculator,
-            Modifier
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp
-                )
-        )
-    }
-}
-
-@Composable
-private fun CalculatorTextFields(calculator: CalculatorViewModel) {
-    Column(
-        verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+            .background(Color.Red)
             .padding(16.dp)
     ) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Green)
+        ) {
+            CalculatorTextFields()
+            CalculatorTopRow()
+            CalculatorButtons(calculator)
+        }
+    }
+}
+
+@Composable
+private fun CalculatorTextFields() {
+    Column (
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxHeight(0.3f)
+            .padding(top = 54.dp)
+    ) {
+
+        BasicTextField(
+            value = "80084 + 1",
+            onValueChange = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.3f),
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.End,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Normal
+            )
+        )
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(32.dp)
-        )
-
-        // Calculator expression field
-        BasicTextField(
-            value = calculator.calcString,
-            onValueChange = {calculator.calcString = it},
-            readOnly = true,
-            textStyle = LocalTextStyle.current.copy(
-                textAlign = TextAlign.End,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 16.dp,
-                    bottom = 64.dp
-                )
-        )
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
+                .fillMaxHeight(0.5f)
         )
 
         BasicTextField(
-            value = calculator.previousAnswer,
-            onValueChange = {calculator.previousAnswer = it},
-            readOnly = true,
-            maxLines = 1,
-            textStyle = LocalTextStyle.current.copy(
-                textAlign = TextAlign.End,
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                fontWeight = MaterialTheme.typography.headlineSmall.fontWeight,
-                fontStyle = FontStyle.Italic
-            ),
+            value = "80085",
+            onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+            ,
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.End,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Thin
+            )
         )
     }
 }
 
 @Composable
-private fun CalculatorButtons(calculator: CalculatorViewModel, modifier: Modifier) {
+private fun CalculatorButtons(calculator: CalculatorViewModel) {
 
     // First to Sixth rows in the calculator
     val firstRow = listOf(
@@ -164,8 +149,12 @@ private fun CalculatorButtons(calculator: CalculatorViewModel, modifier: Modifie
         Pair("=") { calculator.calculate() },
     )
 
-    Column(
-        verticalArrangement = Arrangement.Center,
+    Column (
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Magenta)
     ) {
         CalculatorRow(rowData = firstRow)
         CalculatorRow(rowData = secondRow)
@@ -176,86 +165,39 @@ private fun CalculatorButtons(calculator: CalculatorViewModel, modifier: Modifie
 }
 
 @Composable
-fun CalculatorTopRow(calculator: CalculatorViewModel) {
+fun CalculatorTopRow() {
     Row (
-        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp)
-    ) {
+            .fillMaxHeight(0.1f)
+            .background(Color.Cyan)
+    ){
 
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .size(50.dp)
-                .padding(8.dp)
-            ,
-            contentPadding = PaddingValues(0.dp),
-            onClick = {}
-        ) {
-            Text(
-                text = "A",
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize
-            )
-        }
-
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .size(50.dp)
-                .padding(8.dp)
-            ,
-            contentPadding = PaddingValues(0.dp),
-            onClick = {}
-        ) {
-            Text(
-                text = "B",
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize
-            )
-        }
-
-        Spacer(
-            modifier = Modifier
-                .weight(3f)
-        )
-
-        Button(
-            modifier = Modifier
-                .weight(1f)
-                .size(50.dp)
-                .padding(8.dp)
-            ,
-            contentPadding = PaddingValues(0.dp),
-            onClick = {calculator.clearEntry()}
-        ) {
-            Text(
-                text = "⌫",
-                style = MaterialTheme.typography.bodySmall,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize
-            )
-        }
     }
 }
 
 @Composable
 fun CalculatorRow(rowData: List<Pair<String, () -> Unit>>) {
+
+    val buttonModifier: Modifier = Modifier
+        .width(85.dp)
+        .height(85.dp)
+
+    val rowModifier: Modifier = Modifier
+        .fillMaxWidth()
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    )
+        modifier = rowModifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+        )
     {
         // Creates a row of buttons
         for (pair: Pair<String, () -> Unit> in rowData) {
             val (buttonText, buttonFunction) = pair
             Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .size(100.dp)
-                    .padding(12.dp)
-                ,
+                modifier = buttonModifier,
                 contentPadding = PaddingValues(0.dp),
+                shape = CircleShape,
                 onClick = buttonFunction
             ) {
                 Text(
