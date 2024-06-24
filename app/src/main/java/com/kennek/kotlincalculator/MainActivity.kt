@@ -63,7 +63,7 @@ fun Calculator(calculator: CalculatorViewModel) {
                 .fillMaxSize()
                 .background(Color.Green)
         ) {
-            CalculatorTextFields()
+            CalculatorTextFields(calculator)
             CalculatorTopRow()
             CalculatorButtons(calculator)
         }
@@ -71,7 +71,7 @@ fun Calculator(calculator: CalculatorViewModel) {
 }
 
 @Composable
-private fun CalculatorTextFields() {
+private fun CalculatorTextFields(calculator: CalculatorViewModel) {
     Column (
         modifier = Modifier
             .background(Color.White)
@@ -79,9 +79,11 @@ private fun CalculatorTextFields() {
             .padding(top = 54.dp)
     ) {
 
+        // Calculator Expression
         BasicTextField(
-            value = "80084 + 1",
-            onValueChange = {},
+            readOnly = true,
+            value = calculator.calcString,
+            onValueChange = {calculator.calcString = it},
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.3f),
@@ -98,9 +100,11 @@ private fun CalculatorTextFields() {
                 .fillMaxHeight(0.5f)
         )
 
+        // Answer Text Field
         BasicTextField(
-            value = "80085",
-            onValueChange = {},
+            readOnly = true,
+            value = calculator.previousAnswer,
+            onValueChange = {calculator.previousAnswer = it},
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)
