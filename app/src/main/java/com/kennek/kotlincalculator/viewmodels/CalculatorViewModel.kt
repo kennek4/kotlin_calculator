@@ -148,7 +148,23 @@ class CalculatorViewModel : ViewModel() {
     }
 
     fun clearEntry() {
-        calcString = calcString.dropLast(1)
+        if (calcString.isEmpty()) return
+
+        if (lastIsOperator) {
+
+            calcString = calcString.dropLast(3)
+            lastIsOperator = false
+
+        } else {
+
+            calcString = calcString.dropLast(1)
+
+            val lastChar: Char = calcString.last()
+            if (lastChar == ' ') { // A space will always pad around an operator char
+                lastIsOperator = true
+            }
+        }
+
     }
 
     fun clearResult() {
