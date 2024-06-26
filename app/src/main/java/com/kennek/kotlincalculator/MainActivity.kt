@@ -22,14 +22,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,21 +51,22 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Calculator(calculator: CalculatorViewModel) {
-    Box (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Red)
-            .padding(16.dp)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.End,
+    MaterialTheme {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Green)
+                .background(MaterialTheme.colorScheme.inverseSurface)
+                .padding(16.dp)
         ) {
-            CalculatorTextFields(calculator)
-            CalculatorTopRow()
-            CalculatorButtons(calculator)
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                CalculatorTextFields(calculator)
+                CalculatorTopRow(calculator)
+                CalculatorButtons(calculator)
+            }
         }
     }
 }
@@ -74,7 +75,7 @@ fun Calculator(calculator: CalculatorViewModel) {
 private fun CalculatorTextFields(calculator: CalculatorViewModel) {
     Column (
         modifier = Modifier
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.inverseSurface)
             .fillMaxHeight(0.3f)
             .padding(top = 54.dp)
     ) {
@@ -89,8 +90,9 @@ private fun CalculatorTextFields(calculator: CalculatorViewModel) {
                 .fillMaxHeight(0.3f),
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.End,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Normal
+                fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                fontWeight = MaterialTheme.typography.displayLarge.fontWeight,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         )
 
@@ -111,8 +113,9 @@ private fun CalculatorTextFields(calculator: CalculatorViewModel) {
             ,
             textStyle = LocalTextStyle.current.copy(
                 textAlign = TextAlign.End,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Thin
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         )
     }
@@ -158,7 +161,7 @@ private fun CalculatorButtons(calculator: CalculatorViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Magenta)
+            .background(MaterialTheme.colorScheme.inverseSurface)
     ) {
         CalculatorRow(rowData = firstRow)
         CalculatorRow(rowData = secondRow)
@@ -169,14 +172,23 @@ private fun CalculatorButtons(calculator: CalculatorViewModel) {
 }
 
 @Composable
-fun CalculatorTopRow() {
+fun CalculatorTopRow(calculator: CalculatorViewModel) {
     Row (
+        horizontalArrangement = Arrangement.End,
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.1f)
-            .background(Color.Cyan)
+            .padding(end = 16.dp)
     ){
-
+        TextButton(
+            enabled = (calculator.calcString.isNotEmpty()),
+            onClick = { calculator.clearEntry() },
+        ) {
+            Text(
+                text = "⌫",
+                fontSize = 32.sp
+            )
+        }
     }
 }
 
@@ -198,15 +210,37 @@ fun CalculatorRow(rowData: List<Pair<String, () -> Unit>>) {
         // Creates a row of buttons
         for (pair: Pair<String, () -> Unit> in rowData) {
             val (buttonText, buttonFunction) = pair
+
+            val buttonColors: ButtonColors = when (buttonText) {
+                "C" -> ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.error,
+                    disabledContainerColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                )
+                "=" -> ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                )
+                else -> ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
             Button(
                 modifier = buttonModifier,
                 contentPadding = PaddingValues(0.dp),
                 shape = CircleShape,
-                onClick = buttonFunction
+                onClick = buttonFunction,
+                colors = buttonColors
             ) {
                 Text(
                     text = buttonText,
-                    style = MaterialTheme.typography.titleLarge,
                     fontSize = 32.sp
                 )
             }
