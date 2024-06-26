@@ -157,14 +157,20 @@ class CalculatorViewModel : ViewModel() {
 
         } else {
 
-            calcString = calcString.dropLast(1)
+            if (calcString.dropLast(1).isEmpty()) {
+                calcString = ""
+                return
+            }
 
-            val lastChar: Char = calcString.last()
-            if (lastChar == ' ') { // A space will always pad around an operator char
-                lastIsOperator = true
+            else {
+                calcString = calcString.dropLast(1)
+
+                val lastChar: Char = calcString.last()
+                if (lastChar == ' ') { // A space will always pad around an operator char
+                    lastIsOperator = true
+                }
             }
         }
-
     }
 
     fun clearResult() {
