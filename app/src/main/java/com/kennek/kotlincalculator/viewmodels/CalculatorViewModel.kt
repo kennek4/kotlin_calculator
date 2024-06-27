@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModel
  * Mathematical operator precedence
  */
 private val PRECEDENCE_MAPPING: Map<String, Int> = mapOf(
-    "(" to 3,
-    ")" to 3,
     "%" to 2,
     "/" to 2,
     "*" to 2,
@@ -63,6 +61,9 @@ private fun evaluateExpression(numOne: Float, operator: String, numTwo: Float): 
     return answer
 }
 
+/**
+ * Evaluates a postfix expression when given an array representing said expression
+ */
 private fun postfixEvaluation(postFixArray: Array<String>): Number {
 
     val output = ArrayDeque<String>()
@@ -82,6 +83,9 @@ private fun postfixEvaluation(postFixArray: Array<String>): Number {
     return output.removeLast().toFloat()
 }
 
+/**
+ * Converts an infix expression into a postfix expression represented as an array of strings
+ */
 private fun infixToPostfix(calcString: String): Array<String> {
 
     val splitCalcString: List<String> = calcString.split(" ")
@@ -179,7 +183,4 @@ class CalculatorViewModel : ViewModel() {
         lastIsOperator = false
     }
 
-    fun switchSign() {
-        TODO("Not yet implemented")
-    }
 }
