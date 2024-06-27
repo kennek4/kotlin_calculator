@@ -127,7 +127,6 @@ private fun CalculatorButtons(calculator: CalculatorViewModel) {
     // First to Sixth rows in the calculator
     val firstRow = listOf(
         Pair("C") { calculator.clearResult() },
-        Pair("()") { calculator.addOperator('(') },
         Pair("%") { calculator.addOperator('%') },
         Pair("÷") { calculator.addOperator('/') },
     )
@@ -150,7 +149,6 @@ private fun CalculatorButtons(calculator: CalculatorViewModel) {
         Pair("+") { calculator.addOperator('+') },
     )
     val fifthRow = listOf(
-        Pair("+/-") { calculator.switchSign() },
         Pair("0") { calculator.addNumber(0) },
         Pair(".") { calculator.addDecimal() },
         Pair("=") { calculator.calculate() },
