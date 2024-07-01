@@ -124,7 +124,9 @@ class CalculatorViewModel : ViewModel() {
 
     private var lastIsOperator: Boolean = false // determines if the last input was an operator or not
     var calcString: String by mutableStateOf("")
+        private set
     var previousAnswer: String by mutableStateOf("")
+        private set
 
     fun addOperator(operator: Char) {
         // Can't add an operator to an empty expression
