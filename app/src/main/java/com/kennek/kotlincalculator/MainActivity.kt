@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -71,6 +72,7 @@ fun Calculator(calculator: CalculatorViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CalculatorTextFields(calculator: CalculatorViewModel) {
     Column (
@@ -84,7 +86,7 @@ private fun CalculatorTextFields(calculator: CalculatorViewModel) {
         BasicTextField(
             readOnly = true,
             value = calculator.calcString,
-            onValueChange = {calculator.calcString = it},
+            onValueChange = {calculator.calcString},
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.3f),
@@ -92,7 +94,7 @@ private fun CalculatorTextFields(calculator: CalculatorViewModel) {
                 textAlign = TextAlign.End,
                 fontSize = MaterialTheme.typography.displayLarge.fontSize,
                 fontWeight = MaterialTheme.typography.displayLarge.fontWeight,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         )
 
@@ -106,7 +108,7 @@ private fun CalculatorTextFields(calculator: CalculatorViewModel) {
         BasicTextField(
             readOnly = true,
             value = calculator.previousAnswer,
-            onValueChange = {calculator.previousAnswer = it},
+            onValueChange = {calculator.previousAnswer},
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f)
